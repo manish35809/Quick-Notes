@@ -21,15 +21,18 @@ function createNoteElement(note, index) {
   noteDiv.className =
     "group bg-gray-800/50 backdrop-blur rounded-xl border border-gray-700 hover:border-gray-600 transition-all hover:shadow-lg hover:shadow-blue-500/10 relative";
 
-  const buttonsContainer = document.createElement("div");
-  buttonsContainer.className =
-    "absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity";
-
-  // Helper to create buttons
+    const buttonsContainer = document.createElement("div");
+    // Updated className to ensure right alignment on mobile
+    buttonsContainer.className =
+      "md:absolute md:top-3 md:right-3 flex flex-wrap gap-2 p-3 md:p-0 justify-end md:opacity-0 md:group-hover:opacity-100 transition-opacity border-b border-gray-700 md:border-0 w-full";
+  
+  // Helper to create buttons with mobile-friendly sizing
   const createButton = (icon, color, hoverColor) => {
     const button = document.createElement("button");
-    button.className = `p-2 ${color} ${hoverColor} rounded-lg transition-all hover:scale-110`;
-    button.innerHTML = icon;
+    button.className = `p-2.5 md:p-2 ${color} ${hoverColor} rounded-lg transition-all hover:scale-110`;
+    // Increase icon size for better touch targets
+    const updatedIcon = icon.replace('class="h-4 w-4"', 'class="h-5 w-5 md:h-4 md:w-4"');
+    button.innerHTML = updatedIcon;
     return button;
   };
 
@@ -68,7 +71,7 @@ function createNoteElement(note, index) {
     "hover:text-red-300"
   );
 
-  // Priority buttons (Up and Down)
+  // Priority buttons
   const upButton = createButton(
     `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" stroke="currentColor" fill="none">
      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
@@ -85,7 +88,7 @@ function createNoteElement(note, index) {
     "hover:text-indigo-300"
   );
 
-  // Star Button (Mark Important)
+  // Star Button
   const starButton = createButton(
     isImportant
       ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
@@ -98,7 +101,6 @@ function createNoteElement(note, index) {
     "hover:text-yellow-300"
   );
 
-  // Disable up/down buttons for important notes
   if (isImportant) {
     upButton.disabled = true;
     downButton.disabled = true;
@@ -107,11 +109,12 @@ function createNoteElement(note, index) {
   }
 
   const noteContent = document.createElement("pre");
+  // Updated padding to account for button container on mobile
   noteContent.className =
-    "whitespace-pre-wrap break-words font-sans p-4 text-gray-100";
+    "whitespace-pre-wrap break-words font-sans p-4 pt-4 md:pt-4 text-gray-100";
   noteContent.textContent = note.text;
 
-  // Button actions
+  // Button actions remain the same
   editButton.onclick = () => {
     editingIndex = index;
     noteInput.value = note.text;
@@ -136,7 +139,6 @@ function createNoteElement(note, index) {
     }, 200);
   };
 
-  // Up and Down buttons
   upButton.onclick = () => {
     if (index > 0) {
       [notes[index], notes[index - 1]] = [notes[index - 1], notes[index]];
@@ -153,18 +155,10 @@ function createNoteElement(note, index) {
     }
   };
 
-  // Star button click handler (Mark Important)
   starButton.onclick = () => {
-    // Toggle importance
     notes[index] = { ...notes[index], important: !notes[index].important };
-
-    // Sort notes so important ones appear at the top
     notes.sort((a, b) => b.important - a.important);
-
-    // Save notes to localStorage
     localStorage.setItem("notes", JSON.stringify(notes));
-
-    // Re-render the notes
     renderNotes();
   };
 
@@ -182,7 +176,7 @@ function createNoteElement(note, index) {
   return noteDiv;
 }
 
-// Function to render all notes
+// Rest of the code remains unchanged
 function renderNotes() {
   notesContainer.innerHTML = "";
   notes.forEach((note, index) => {
@@ -190,7 +184,6 @@ function renderNotes() {
   });
 }
 
-// Function to add or update a note
 function addOrUpdateNote() {
   const text = noteInput.value.trim();
   if (text) {
@@ -210,7 +203,6 @@ function addOrUpdateNote() {
   }
 }
 
-// Event listeners
 noteInput.addEventListener("input", () => {
   autoResize(noteInput);
 });
@@ -228,7 +220,6 @@ noteInput.addEventListener("keydown", (e) => {
 
 addButton.addEventListener("click", addOrUpdateNote);
 
-// Show/hide add button based on screen size
 const mediaQuery = window.matchMedia("(max-width: 768px)");
 function handleScreenSize(e) {
   addButton.style.display = e.matches ? "block" : "none";
@@ -236,8 +227,5 @@ function handleScreenSize(e) {
 mediaQuery.addListener(handleScreenSize);
 handleScreenSize(mediaQuery);
 
-// Initial render
 renderNotes();
-
-// Initial textarea size
 autoResize(noteInput);
