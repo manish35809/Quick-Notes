@@ -267,4 +267,4 @@ const themeToggle = document.getElementById('themeToggle');
         });
       });
       observer.observe(html, { attributes: true, attributeFilter: ['class'] });
-    </script>
+    
