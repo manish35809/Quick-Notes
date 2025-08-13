@@ -1,6 +1,6 @@
 import "./style.css";
-// Theme management
-      const themeToggle = document.getElementById('themeToggle');
+
+const themeToggle = document.getElementById('themeToggle');
       const html = document.documentElement;
       
       // Load theme from localStorage or default to dark
@@ -51,10 +51,10 @@ import "./style.css";
       // Function to create note element
       function createNoteElement(note, index) {
         const noteDiv = document.createElement("div");
-        noteDiv.className = "group bg-white/70 dark:bg-gray-800/50 backdrop-blur rounded-xl border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 transition-all hover:shadow-lg hover:shadow-blue-500/10 relative";
+        noteDiv.className = "group bg-white/90 dark:bg-gray-800/50 backdrop-blur rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-gray-600 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-500/10 relative";
 
         const buttonsContainer = document.createElement("div");
-        buttonsContainer.className = "md:absolute md:top-3 md:right-3 flex flex-wrap gap-2 p-3 md:p-0 justify-end md:opacity-0 md:group-hover:opacity-100 transition-opacity border-b border-gray-200 dark:border-gray-700 md:border-0 w-full";
+        buttonsContainer.className = "md:absolute md:top-3 md:right-3 flex flex-wrap gap-2 p-3 md:p-0 justify-end md:opacity-0 md:group-hover:opacity-100 transition-opacity border-b border-gray-100 dark:border-gray-700 md:border-0 w-full";
 
         // Helper to create buttons with mobile-friendly sizing
         const createButton = (icon, color, hoverColor) => {
@@ -267,3 +267,4 @@ import "./style.css";
         });
       });
       observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    </script>
