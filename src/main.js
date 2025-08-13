@@ -1,5 +1,7 @@
 import "./style.css";
 
+const currentTheme = localStorage.getItem('theme') || 'dark';
+
 const themeToggle = document.getElementById('themeToggle');
       const html = document.documentElement;
       
