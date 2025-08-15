@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="">
   <head>
@@ -100,14 +101,14 @@
 
       /* Custom scrollbar */
       ::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
       }
       ::-webkit-scrollbar-track {
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
         background: #cbd5e0;
-        border-radius: 4px;
+        border-radius: 3px;
       }
       .dark ::-webkit-scrollbar-thumb {
         background: #4a5568;
@@ -120,138 +121,259 @@
       }
 
       /* Note categories colors */
-      .category-work { border-left: 4px solid #3b82f6; }
-      .category-personal { border-left: 4px solid #10b981; }
-      .category-ideas { border-left: 4px solid #f59e0b; }
-      .category-code { border-left: 4px solid #8b5cf6; }
-      .category-urgent { border-left: 4px solid #ef4444; }
+      .category-work { border-left: 3px solid #3b82f6; }
+      .category-personal { border-left: 3px solid #10b981; }
+      .category-ideas { border-left: 3px solid #f59e0b; }
+      .category-code { border-left: 3px solid #8b5cf6; }
+      .category-urgent { border-left: 3px solid #ef4444; }
 
       /* Enhanced input focus */
       .input-enhanced:focus {
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 10px 25px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
       }
 
       /* Save indicator animation */
       .save-indicator {
         animation: pulse-gentle 1s ease-in-out;
       }
+
+      /* Mobile optimizations */
+      @media (max-width: 768px) {
+        .note-card {
+          margin: 0 -4px;
+        }
+        
+        .filter-scroll {
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        
+        .filter-scroll::-webkit-scrollbar {
+          display: none;
+        }
+
+        /* Improve touch targets */
+        .action-btn {
+          min-width: 44px;
+          min-height: 44px;
+        }
+        
+        /* Better mobile textarea */
+        .mobile-textarea {
+          font-size: 16px; /* Prevents zoom on iOS */
+        }
+      }
+
+      /* Floating Action Button */
+      .fab {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+      }
+      
+      .fab:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Search overlay for mobile */
+      .search-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        display: none;
+      }
+      
+      .search-overlay.active {
+        display: flex;
+        align-items: flex-start;
+        padding-top: 80px;
+      }
+
+      /* Compact mode for mobile */
+      @media (max-width: 640px) {
+        .note-content {
+          font-size: 14px;
+          line-height: 1.5;
+        }
+        
+        .note-header {
+          padding: 12px 16px 8px;
+        }
+        
+        .note-body {
+          padding: 0 16px 16px;
+        }
+      }
     </style>
   </head>
   <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-all duration-500">
     
-    <!-- Enhanced Header -->
+    <!-- Enhanced Header - Mobile Optimized -->
     <header class="fixed top-0 left-0 right-0 z-50 glass bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-700/50">
-      <div class="container mx-auto px-4 py-3 flex items-center justify-between max-w-6xl">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a2 2 0 002 2h4a2 2 0 002-2V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm8 8v2a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 00-1-1h-3a1 1 0 00-1 1z" clip-rule="evenodd"/>
-            </svg>
-          </div>
-          <div>
-            <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Quick Notes</h1>
-            <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <span id="noteCount">0 notes</span>
-              <span>•</span>
-              <span id="lastSaved">Ready</span>
+      <div class="container mx-auto px-3 sm:px-4 py-2 sm:py-3 max-w-6xl">
+        <div class="flex items-center justify-between">
+          <!-- Logo and Title - Responsive -->
+          <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a2 2 0 002 2h4a2 2 0 002-2V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm8 8v2a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 00-1-1h-3a1 1 0 00-1 1z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Quick Notes</h1>
+              <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                <span id="noteCount">0 notes</span>
+                <span class="hidden sm:inline">•</span>
+                <span id="lastSaved" class="hidden sm:inline">Ready</span>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <!-- Header Controls -->
-        <div class="flex items-center gap-2">
-          <!-- Search -->
-          <div class="relative hidden md:block">
-            <input
-              id="searchInput"
-              type="text"
-              placeholder="Search notes..."
-              class="w-64 px-3 py-2 pl-9 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
+          
+          <!-- Header Controls - Mobile Optimized -->
+          <div class="flex items-center gap-1 sm:gap-2">
+            <!-- Mobile Search Button -->
+            <button id="mobileSearchBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Search">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </button>
+            
+            <!-- Desktop Search -->
+            <div class="relative hidden md:block">
+              <input
+                id="searchInput"
+                type="text"
+                placeholder="Search notes..."
+                class="w-48 lg:w-64 px-3 py-2 pl-9 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            
+            <!-- View Toggle - Hidden on mobile -->
+            <button id="viewToggle" class="hidden sm:flex p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Toggle View">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              </svg>
+            </button>
+            
+            <!-- Theme Toggle -->
+            <button
+              id="themeToggle"
+              class="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 hover:scale-105 shadow-lg"
+              title="Toggle Theme"
+            >
+              <svg id="sunIcon" class="w-4 h-4 sm:w-5 sm:h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+              </svg>
+              <svg id="moonIcon" class="w-4 h-4 sm:w-5 sm:h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+              </svg>
+            </button>
           </div>
-          
-          <!-- View Toggle -->
-          <button id="viewToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Toggle View">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-            </svg>
-          </button>
-          
-          <!-- Theme Toggle -->
-          <button
-            id="themeToggle"
-            class="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 hover:scale-105 shadow-lg"
-            title="Toggle Theme"
-          >
-            <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
-            </svg>
-            <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-            </svg>
-          </button>
         </div>
       </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="pt-20 pb-32">
-      <!-- Filter Bar -->
-      <div class="container mx-auto px-4 py-4 max-w-6xl">
-        <div class="flex flex-wrap gap-2 items-center justify-between">
-          <div class="flex flex-wrap gap-2">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="important">⭐ Important</button>
-            <button class="filter-btn" data-filter="work">💼 Work</button>
-            <button class="filter-btn" data-filter="personal">🏠 Personal</button>
-            <button class="filter-btn" data-filter="ideas">💡 Ideas</button>
-            <button class="filter-btn" data-filter="code">💻 Code</button>
-            <button class="filter-btn" data-filter="urgent">🚨 Urgent</button>
+    <!-- Mobile Search Overlay -->
+    <div id="searchOverlay" class="search-overlay">
+      <div class="w-full max-w-md mx-auto px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4">
+          <div class="relative mb-4">
+            <input
+              id="mobileSearchInput"
+              type="text"
+              placeholder="Search notes..."
+              class="w-full px-4 py-3 pl-12 text-base bg-gray-100 dark:bg-gray-700 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 mobile-textarea"
+            />
+            <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
           </div>
-          <div class="flex gap-2">
-            <select id="sortBy" class="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <button id="closeMobileSearch" class="w-full py-2 text-gray-500 dark:text-gray-400">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-16 sm:pt-20 pb-40 sm:pb-32">
+      <!-- Filter Bar - Mobile Optimized -->
+      <div class="container mx-auto px-3 sm:px-4 py-3 sm:py-4 max-w-6xl">
+        <div class="space-y-3">
+          <!-- Mobile: Horizontal scrolling filters -->
+          <div class="flex overflow-x-auto filter-scroll pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap gap-2">
+            <button class="filter-btn active flex-shrink-0" data-filter="all">All</button>
+            <button class="filter-btn flex-shrink-0" data-filter="important">⭐ Important</button>
+            <button class="filter-btn flex-shrink-0" data-filter="work">💼 Work</button>
+            <button class="filter-btn flex-shrink-0" data-filter="personal">🏠 Personal</button>
+            <button class="filter-btn flex-shrink-0" data-filter="ideas">💡 Ideas</button>
+            <button class="filter-btn flex-shrink-0" data-filter="code">💻 Code</button>
+            <button class="filter-btn flex-shrink-0" data-filter="urgent">🚨 Urgent</button>
+          </div>
+          
+          <!-- Controls - Mobile responsive -->
+          <div class="flex items-center justify-between gap-2">
+            <select id="sortBy" class="flex-1 sm:flex-none px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
               <option value="alphabetical">A-Z</option>
               <option value="important">Important First</option>
             </select>
-            <button id="exportBtn" class="px-3 py-1.5 text-sm bg-green-100 hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg transition-colors" title="Export Notes">
-              📤 Export
-            </button>
-            <button id="clearAllBtn" class="px-3 py-1.5 text-sm bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg transition-colors">
-              Clear All
-            </button>
+            
+            <div class="flex gap-2">
+              <button id="exportBtn" class="px-2 sm:px-3 py-2 text-xs sm:text-sm bg-green-100 hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg transition-colors whitespace-nowrap" title="Export Notes">
+                <span class="hidden sm:inline">📤 Export</span>
+                <span class="sm:hidden">📤</span>
+              </button>
+              <button id="clearAllBtn" class="px-2 sm:px-3 py-2 text-xs sm:text-sm bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg transition-colors whitespace-nowrap">
+                <span class="hidden sm:inline">Clear All</span>
+                <span class="sm:hidden">Clear</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Notes Container -->
-      <div id="notes-container" class="container mx-auto px-4 max-w-6xl">
+      <div id="notes-container" class="container mx-auto px-3 sm:px-4 max-w-6xl">
         <!-- Notes will be inserted here -->
       </div>
 
       <!-- Empty State -->
-      <div id="emptyState" class="text-center py-16 opacity-60">
-        <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center">
-          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div id="emptyState" class="text-center py-12 sm:py-16 opacity-60 px-4">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center">
+          <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
         </div>
-        <h3 class="text-xl font-semibold mb-2">No notes yet</h3>
-        <p class="text-gray-500 dark:text-gray-400">Start by creating your first note below</p>
+        <h3 class="text-lg sm:text-xl font-semibold mb-2">No notes yet</h3>
+        <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">Start by creating your first note below</p>
       </div>
     </main>
 
-    <!-- Enhanced Input Area -->
-    <div class="fixed bottom-0 left-0 right-0 glass bg-white/80 dark:bg-gray-900/80 border-t border-gray-200/50 dark:border-gray-700/50">
-      <div class="container mx-auto px-4 max-w-6xl py-4">
-        <!-- Category and Tags -->
-        <div class="flex flex-wrap gap-2 mb-3">
-          <select id="categorySelect" class="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+    <!-- Enhanced Input Area - Mobile Optimized -->
+    <div class="fixed bottom-0 left-0 right-0 glass bg-white/90 dark:bg-gray-900/90 border-t border-gray-200/50 dark:border-gray-700/50 safe-area-padding">
+      <div class="container mx-auto px-3 sm:px-4 max-w-6xl py-3 sm:py-4">
+        <!-- Category and Tags - Mobile responsive -->
+        <div class="flex flex-col sm:flex-row gap-2 mb-3">
+          <select id="categorySelect" class="flex-1 sm:flex-none px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
             <option value="">No Category</option>
             <option value="work">💼 Work</option>
             <option value="personal">🏠 Personal</option>
@@ -263,32 +385,31 @@
             id="tagsInput"
             type="text"
             placeholder="Tags (comma separated)"
-            class="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex-grow max-w-xs"
+            class="flex-1 px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg mobile-textarea"
           />
         </div>
         
-        <!-- Main Input -->
+        <!-- Main Input - Mobile optimized -->
         <div class="relative">
           <textarea
             id="noteInput"
-            class="w-full p-4 pr-20 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-blue-500 focus:ring-0 resize-none text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[60px] input-enhanced code-font transition-all duration-300"
-            placeholder="Type your note here... (Enter to save, Shift+Enter for new line, Esc to cancel)"
+            class="w-full p-3 sm:p-4 pr-16 sm:pr-20 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-2xl focus:border-blue-500 focus:ring-0 resize-none text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[50px] sm:min-h-[60px] input-enhanced code-font transition-all duration-300 mobile-textarea"
+            placeholder="Type your note here... (Enter to save, Shift+Enter for new line)"
             rows="1"
           ></textarea>
           
-          <!-- Input Controls -->
-          <div class="absolute right-3 bottom-3 flex items-center gap-2">
+          <!-- Input Controls - Mobile optimized -->
+          <div class="absolute right-2 sm:right-3 bottom-2 sm:bottom-3 flex items-center gap-1 sm:gap-2">
             <div class="flex items-center gap-1 text-xs text-gray-400">
               <span id="charCount">0</span>
-              <span>/</span>
-              <span>∞</span>
+              <span class="hidden sm:inline">/∞</span>
             </div>
             <button
               id="addButton"
-              class="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              class="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg sm:rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed action-btn"
               disabled
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
               </svg>
             </button>
