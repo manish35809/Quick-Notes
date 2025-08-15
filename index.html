@@ -50,40 +50,53 @@
         font-family: 'JetBrains Mono', monospace;
       }
       
-      /* Light mode colorful text styles */
-      .light-mode-text {
-        background: linear-gradient(135deg, 
-          #667eea 0%, 
-          #764ba2 25%, 
-          #f093fb 50%, 
-          #f5576c 75%, 
-          #4facfe 100%
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        background-size: 200% 200%;
-        animation: gradient-shift 8s ease infinite;
+      /* Enhanced syntax highlighting with better contrast */
+      .syntax-keyword { color: #d73a49; font-weight: 600; }
+      .syntax-string { color: #032f62; font-weight: 500; }
+      .syntax-number { color: #005cc5; font-weight: 600; }
+      .syntax-comment { color: #6a737d; font-style: italic; }
+      .syntax-function { color: #6f42c1; font-weight: 500; }
+      .syntax-variable { color: #e36209; font-weight: 500; }
+      .syntax-operator { color: #d73a49; font-weight: 600; }
+      .syntax-bracket { color: #586069; font-weight: 500; }
+      
+      .dark .syntax-keyword { color: #ff7b72; font-weight: 600; }
+      .dark .syntax-string { color: #a5d6ff; font-weight: 500; }
+      .dark .syntax-number { color: #79c0ff; font-weight: 600; }
+      .dark .syntax-comment { color: #8b949e; }
+      .dark .syntax-function { color: #d2a8ff; font-weight: 500; }
+      .dark .syntax-variable { color: #ffa657; font-weight: 500; }
+      .dark .syntax-operator { color: #ff7b72; font-weight: 600; }
+      .dark .syntax-bracket { color: #c9d1d9; font-weight: 500; }
+
+      /* Regular text styling - bold and clear */
+      .note-text-regular {
+        color: #1a202c;
+        font-weight: 600;
+        line-height: 1.6;
       }
       
-      /* Enhanced syntax highlighting */
-      .syntax-keyword { color: #d73a49; font-weight: 600; }
-      .syntax-string { color: #032f62; }
-      .syntax-number { color: #005cc5; }
-      .syntax-comment { color: #6a737d; font-style: italic; }
-      .syntax-function { color: #6f42c1; }
-      .syntax-variable { color: #e36209; }
-      .syntax-operator { color: #d73a49; }
-      .syntax-bracket { color: #586069; }
+      .dark .note-text-regular {
+        color: #f7fafc;
+        font-weight: 500;
+      }
+
+      /* Code text styling */
+      .note-text-code {
+        color: #2d3748;
+        font-weight: 500;
+        line-height: 1.5;
+        background: rgba(237, 242, 247, 0.8);
+        padding: 8px;
+        border-radius: 6px;
+        border-left: 3px solid #4299e1;
+      }
       
-      .dark .syntax-keyword { color: #ff7b72; }
-      .dark .syntax-string { color: #a5d6ff; }
-      .dark .syntax-number { color: #79c0ff; }
-      .dark .syntax-comment { color: #8b949e; }
-      .dark .syntax-function { color: #d2a8ff; }
-      .dark .syntax-variable { color: #ffa657; }
-      .dark .syntax-operator { color: #ff7b72; }
-      .dark .syntax-bracket { color: #c9d1d9; }
+      .dark .note-text-code {
+        color: #e2e8f0;
+        background: rgba(45, 55, 72, 0.6);
+        border-left-color: #63b3ed;
+      }
 
       /* Custom scrollbar */
       ::-webkit-scrollbar {
@@ -339,7 +352,7 @@
           .replace(/>/g, '&gt;')
           .replace(/\b(function|const|let|var|if|else|for|while|return|class|import|export|async|await|try|catch|finally|throw|new|this|super|extends|static|get|set)\b/g, '<span class="syntax-keyword">$1</span>')
           .replace(/(['"`])((?:\\.|(?!\1)[^\\])*)\1/g, '<span class="syntax-string">$1$2$1</span>')
-          .replace(/\b\d+\.?\d*\b/g, '<span class="syntax-number">$&</span>')
+          .replace(/\b(\d+\.?\d*)\b/g, '<span class="syntax-number">$1</span>')
           .replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, '<span class="syntax-comment">$1</span>')
           .replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(/g, '<span class="syntax-function">$1</span>(')
           .replace(/([+\-*\/=<>!&|%^~]+)/g, '<span class="syntax-operator">$1</span>')
@@ -347,8 +360,10 @@
       }
 
       function shouldUseSyntaxHighlighting(text) {
-        const codeKeywords = ['function', 'const', 'let', 'var', 'if', 'for', 'while', 'return', 'class', 'import'];
-        return codeKeywords.some(keyword => text.includes(keyword));
+        const codeKeywords = ['function', 'const', 'let', 'var', 'if', 'for', 'while', 'return', 'class', 'import', '()', '=>', '{}', '[]'];
+        return codeKeywords.some(keyword => text.includes(keyword)) || 
+               text.includes('++') || text.includes('--') || text.includes('===') ||
+               /^\s*(\/\/|\/\*|\*|#|<!--|<\w+|{\w+|function\s+\w+|class\s+\w+)/m.test(text);
       }
 
       // Note Creation
@@ -452,12 +467,15 @@
         const noteText = document.createElement('div');
         noteText.className = 'whitespace-pre-wrap break-words code-font text-sm leading-relaxed';
 
-        if (!isDarkMode && !shouldUseSyntaxHighlighting(note.text)) {
-          noteText.className += ' light-mode-text';
-          noteText.textContent = note.text;
-        } else {
-          noteText.className += ' text-gray-800 dark:text-gray-100';
+        // Improved text rendering logic
+        if (shouldUseSyntaxHighlighting(note.text)) {
+          // Code content - use syntax highlighting with proper background
+          noteText.className += ' note-text-code';
           noteText.innerHTML = applySyntaxHighlighting(note.text);
+        } else {
+          // Regular content - use bold, clear text
+          noteText.className += ' note-text-regular';
+          noteText.textContent = note.text;
         }
 
         content.appendChild(noteText);
