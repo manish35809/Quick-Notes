@@ -722,35 +722,7 @@
 
         // Add some demo notes for better UX
         if (notes.length === 0) {
-          notes = [
-            {
-              id: generateId(),
-              text: "Welcome to Enhanced Quick Notes! 🎉\n\nFeatures:\n• Rich categories and tags\n• Search functionality\n• Syntax highlighting for code\n• Grid/list view toggle\n• Dark/light theme\n• Export capabilities",
-              category: "ideas",
-              tags: ["welcome", "features"],
-              important: true,
-              createdAt: Date.now() - 1000,
-              updatedAt: Date.now() - 1000
-            },
-            {
-              id: generateId(),
-              text: "const greeting = 'Hello World!';\nconsole.log(greeting);\n\n// This note demonstrates syntax highlighting",
-              category: "code",
-              tags: ["javascript", "demo"],
-              important: false,
-              createdAt: Date.now() - 2000,
-              updatedAt: Date.now() - 2000
-            },
-            {
-              id: generateId(),
-              text: "Meeting with team at 2 PM\n- Discuss project timeline\n- Review budget allocation\n- Plan next sprint",
-              category: "work",
-              tags: ["meeting", "planning"],
-              important: false,
-              createdAt: Date.now() - 3000,
-              updatedAt: Date.now() - 3000
-            }
-          ];
+          notes = [];
           renderNotes();
           updateStats();
         }
