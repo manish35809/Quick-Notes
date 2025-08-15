@@ -1,19 +1,50 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quick Notes</title>
+    <title>Enhanced Quick Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         darkMode: 'class',
         theme: {
-          extend: {}
+          extend: {
+            animation: {
+              'gradient-shift': 'gradient-shift 8s ease infinite',
+              'fade-in': 'fade-in 0.3s ease-out',
+              'slide-up': 'slide-up 0.3s ease-out',
+              'pulse-gentle': 'pulse-gentle 2s ease-in-out infinite',
+            },
+            keyframes: {
+              'gradient-shift': {
+                '0%': { 'background-position': '0% 50%' },
+                '50%': { 'background-position': '100% 50%' },
+                '100%': { 'background-position': '0% 50%' },
+              },
+              'fade-in': {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'slide-up': {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              'pulse-gentle': {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0.8' },
+              },
+            }
+          }
         }
       }
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+      
+      body {
+        font-family: 'Inter', sans-serif;
+      }
       
       .code-font {
         font-family: 'JetBrains Mono', monospace;
@@ -35,13 +66,7 @@
         animation: gradient-shift 8s ease infinite;
       }
       
-      @keyframes gradient-shift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-      
-      /* Syntax highlighting colors for light mode */
+      /* Enhanced syntax highlighting */
       .syntax-keyword { color: #d73a49; font-weight: 600; }
       .syntax-string { color: #032f62; }
       .syntax-number { color: #005cc5; }
@@ -51,7 +76,6 @@
       .syntax-operator { color: #d73a49; }
       .syntax-bracket { color: #586069; }
       
-      /* Dark mode syntax colors */
       .dark .syntax-keyword { color: #ff7b72; }
       .dark .syntax-string { color: #a5d6ff; }
       .dark .syntax-number { color: #79c0ff; }
@@ -60,53 +84,680 @@
       .dark .syntax-variable { color: #ffa657; }
       .dark .syntax-operator { color: #ff7b72; }
       .dark .syntax-bracket { color: #c9d1d9; }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e0;
+        border-radius: 4px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #4a5568;
+      }
+
+      /* Glassmorphism effect */
+      .glass {
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
+      /* Note categories colors */
+      .category-work { border-left: 4px solid #3b82f6; }
+      .category-personal { border-left: 4px solid #10b981; }
+      .category-ideas { border-left: 4px solid #f59e0b; }
+      .category-code { border-left: 4px solid #8b5cf6; }
+      .category-urgent { border-left: 4px solid #ef4444; }
+
+      /* Enhanced input focus */
+      .input-enhanced:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
     </style>
   </head>
-  <body class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 min-h-screen flex flex-col text-gray-800 dark:text-gray-100 transition-colors duration-300">
+  <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-all duration-500">
     
-    <!-- Theme Toggle Button -->
-    <div class="fixed top-4 right-4 z-50">
-      <button
-        id="themeToggle"
-        class="p-3 bg-white dark:bg-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:scale-110"
-      >
-        <svg id="sunIcon" class="h-6 w-6 text-yellow-500 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
-        </svg>
-        <svg id="moonIcon" class="h-6 w-6 text-gray-700 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-        </svg>
-      </button>
-    </div>
-
-    <div id="notes-container" class="container mx-auto px-4 py-8 max-w-4xl flex-grow space-y-4 mb-24">
-      <!-- Notes will be inserted here -->
-    </div>
-    
-    <div class="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-100/95 via-gray-100/90 to-transparent dark:from-gray-900/95 dark:via-gray-900/90 backdrop-blur-2xl">
-      <div class="container mx-auto px-6 max-w-4xl py-8">
-        <div class="relative flex gap-3 items-center bg-white/60 dark:bg-gray-800/40 p-2 rounded-2xl border border-gray-300/50 dark:border-gray-700/50 shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.2)] transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-md">
-          <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-2xl"></div>
-          <textarea
-            id="noteInput"
-            class="relative flex-grow p-3 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[44px] z-10 code-font"
-            placeholder="Type your note and press Enter to save..."
-            rows="1"
-          ></textarea>
+    <!-- Enhanced Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-700/50">
+      <div class="container mx-auto px-4 py-3 flex items-center justify-between max-w-6xl">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a2 2 0 002 2h4a2 2 0 002-2V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm8 8v2a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 00-1-1h-3a1 1 0 00-1 1z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Quick Notes</h1>
+            <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <span id="noteCount">0 notes</span>
+              <span>•</span>
+              <span id="lastSaved">Ready</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Header Controls -->
+        <div class="flex items-center gap-2">
+          <!-- Search -->
+          <div class="relative hidden md:block">
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Search notes..."
+              class="w-64 px-3 py-2 pl-9 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          
+          <!-- View Toggle -->
+          <button id="viewToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Toggle View">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
+          </button>
+          
+          <!-- Theme Toggle -->
           <button
-            id="addButton"
-            class="relative hidden md:hidden bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-2.5 rounded-xl hover:from-blue-500 hover:to-blue-400 transition-all hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 z-10"
+            id="themeToggle"
+            class="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 hover:scale-105 shadow-lg"
+            title="Toggle Theme"
           >
-            <span class="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Add
-            </span>
+            <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+            </svg>
+            <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+            </svg>
           </button>
         </div>
       </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-32">
+      <!-- Filter Bar -->
+      <div class="container mx-auto px-4 py-4 max-w-6xl">
+        <div class="flex flex-wrap gap-2 items-center justify-between">
+          <div class="flex flex-wrap gap-2">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="important">⭐ Important</button>
+            <button class="filter-btn" data-filter="work">💼 Work</button>
+            <button class="filter-btn" data-filter="personal">🏠 Personal</button>
+            <button class="filter-btn" data-filter="ideas">💡 Ideas</button>
+            <button class="filter-btn" data-filter="code">💻 Code</button>
+            <button class="filter-btn" data-filter="urgent">🚨 Urgent</button>
+          </div>
+          <div class="flex gap-2">
+            <select id="sortBy" class="px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="alphabetical">A-Z</option>
+              <option value="important">Important First</option>
+            </select>
+            <button id="clearAllBtn" class="px-3 py-1.5 text-sm bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg transition-colors">
+              Clear All
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes Container -->
+      <div id="notes-container" class="container mx-auto px-4 max-w-6xl">
+        <!-- Notes will be inserted here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="text-center py-16 opacity-60">
+        <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center">
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">No notes yet</h3>
+        <p class="text-gray-500 dark:text-gray-400">Start by creating your first note below</p>
+      </div>
+    </main>
+
+    <!-- Enhanced Input Area -->
+    <div class="fixed bottom-0 left-0 right-0 glass bg-white/80 dark:bg-gray-900/80 border-t border-gray-200/50 dark:border-gray-700/50">
+      <div class="container mx-auto px-4 max-w-6xl py-4">
+        <!-- Category and Tags -->
+        <div class="flex flex-wrap gap-2 mb-3">
+          <select id="categorySelect" class="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <option value="">No Category</option>
+            <option value="work">💼 Work</option>
+            <option value="personal">🏠 Personal</option>
+            <option value="ideas">💡 Ideas</option>
+            <option value="code">💻 Code</option>
+            <option value="urgent">🚨 Urgent</option>
+          </select>
+          <input
+            id="tagsInput"
+            type="text"
+            placeholder="Tags (comma separated)"
+            class="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex-grow max-w-xs"
+          />
+        </div>
+        
+        <!-- Main Input -->
+        <div class="relative">
+          <textarea
+            id="noteInput"
+            class="w-full p-4 pr-20 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:border-blue-500 focus:ring-0 resize-none text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[60px] input-enhanced code-font transition-all duration-300"
+            placeholder="Type your note here... (Enter to save, Shift+Enter for new line, Esc to cancel)"
+            rows="1"
+          ></textarea>
+          
+          <!-- Input Controls -->
+          <div class="absolute right-3 bottom-3 flex items-center gap-2">
+            <div class="flex items-center gap-1 text-xs text-gray-400">
+              <span id="charCount">0</span>
+              <span>/</span>
+              <span>∞</span>
+            </div>
+            <button
+              id="addButton"
+              class="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <script type="module" src="/src/main.js"></script>
+
+    <script>
+      // Application State
+      let notes = [];
+      let editingIndex = null;
+      let currentFilter = 'all';
+      let currentSort = 'newest';
+      let isGridView = false;
+      let searchQuery = '';
+
+      // Theme Management (starts in light mode)
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      let isDarkMode = false;
+
+      themeToggle.addEventListener('click', () => {
+        isDarkMode = !isDarkMode;
+        html.classList.toggle('dark', isDarkMode);
+        renderNotes();
+      });
+
+      // Elements
+      const noteInput = document.getElementById('noteInput');
+      const notesContainer = document.getElementById('notes-container');
+      const addButton = document.getElementById('addButton');
+      const categorySelect = document.getElementById('categorySelect');
+      const tagsInput = document.getElementById('tagsInput');
+      const searchInput = document.getElementById('searchInput');
+      const viewToggle = document.getElementById('viewToggle');
+      const sortBy = document.getElementById('sortBy');
+      const clearAllBtn = document.getElementById('clearAllBtn');
+      const emptyState = document.getElementById('emptyState');
+      const charCount = document.getElementById('charCount');
+      const noteCount = document.getElementById('noteCount');
+      const lastSaved = document.getElementById('lastSaved');
+
+      // Utility Functions
+      function updateStats() {
+        noteCount.textContent = `${notes.length} note${notes.length !== 1 ? 's' : ''}`;
+        lastSaved.textContent = notes.length > 0 ? 'Auto-saved' : 'Ready';
+      }
+
+      function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+      }
+
+      function formatDate(date) {
+        return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+          Math.ceil((date - Date.now()) / (1000 * 60 * 60 * 24)), 'day'
+        );
+      }
+
+      function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+      }
+
+      function applySyntaxHighlighting(text) {
+        return text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\b(function|const|let|var|if|else|for|while|return|class|import|export|async|await|try|catch|finally|throw|new|this|super|extends|static|get|set)\b/g, '<span class="syntax-keyword">$1</span>')
+          .replace(/(['"`])((?:\\.|(?!\1)[^\\])*)\1/g, '<span class="syntax-string">$1$2$1</span>')
+          .replace(/\b\d+\.?\d*\b/g, '<span class="syntax-number">$&</span>')
+          .replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, '<span class="syntax-comment">$1</span>')
+          .replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(/g, '<span class="syntax-function">$1</span>(')
+          .replace(/([+\-*\/=<>!&|%^~]+)/g, '<span class="syntax-operator">$1</span>')
+          .replace(/([{}[\]()])/g, '<span class="syntax-bracket">$1</span>');
+      }
+
+      function shouldUseSyntaxHighlighting(text) {
+        const codeKeywords = ['function', 'const', 'let', 'var', 'if', 'for', 'while', 'return', 'class', 'import'];
+        return codeKeywords.some(keyword => text.includes(keyword));
+      }
+
+      // Note Creation
+      function createNoteElement(note, index) {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = `note-card group bg-white/90 dark:bg-gray-800/50 backdrop-blur rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-gray-600 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 dark:hover:shadow-blue-500/5 hover:-translate-y-1 relative overflow-hidden animate-slide-up ${note.category ? 'category-' + note.category : ''}`;
+        
+        // Important indicator
+        if (note.important) {
+          noteDiv.classList.add('ring-2', 'ring-yellow-400/50');
+        }
+
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between p-4 pb-2';
+
+        const headerLeft = document.createElement('div');
+        headerLeft.className = 'flex items-center gap-2 flex-1 min-w-0';
+
+        // Category badge
+        if (note.category) {
+          const categoryBadge = document.createElement('span');
+          const categoryEmojis = { work: '💼', personal: '🏠', ideas: '💡', code: '💻', urgent: '🚨' };
+          categoryBadge.className = 'px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded-full';
+          categoryBadge.textContent = categoryEmojis[note.category] + ' ' + note.category.charAt(0).toUpperCase() + note.category.slice(1);
+          headerLeft.appendChild(categoryBadge);
+        }
+
+        // Tags
+        if (note.tags && note.tags.length > 0) {
+          const tagsContainer = document.createElement('div');
+          tagsContainer.className = 'flex flex-wrap gap-1';
+          note.tags.forEach(tag => {
+            const tagSpan = document.createElement('span');
+            tagSpan.className = 'px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full';
+            tagSpan.textContent = '#' + tag;
+            tagsContainer.appendChild(tagSpan);
+          });
+          headerLeft.appendChild(tagsContainer);
+        }
+
+        // Timestamp
+        const timestamp = document.createElement('div');
+        timestamp.className = 'text-xs text-gray-400 ml-auto flex-shrink-0';
+        timestamp.textContent = formatDate(new Date(note.createdAt));
+        headerLeft.appendChild(timestamp);
+
+        header.appendChild(headerLeft);
+
+        // Action Buttons
+        const actions = document.createElement('div');
+        actions.className = 'flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity';
+
+        const createActionButton = (icon, color, action, tooltip) => {
+          const button = document.createElement('button');
+          button.className = `p-2 ${color} rounded-lg transition-all hover:scale-110`;
+          button.innerHTML = icon;
+          button.title = tooltip;
+          button.onclick = action;
+          return button;
+        };
+
+        // Star button
+        const starButton = createActionButton(
+          note.important 
+            ? '<svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>'
+            : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>',
+          'text-yellow-500 hover:bg-yellow-500/20',
+          () => toggleImportant(index),
+          'Toggle Important'
+        );
+
+        const editButton = createActionButton(
+          '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
+          'text-blue-500 hover:bg-blue-500/20',
+          () => editNote(index),
+          'Edit Note'
+        );
+
+        const copyButton = createActionButton(
+          '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>',
+          'text-green-500 hover:bg-green-500/20',
+          () => copyNote(note, copyButton),
+          'Copy Note'
+        );
+
+        const deleteButton = createActionButton(
+          '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>',
+          'text-red-500 hover:bg-red-500/20',
+          () => deleteNote(index, noteDiv),
+          'Delete Note'
+        );
+
+        actions.append(starButton, editButton, copyButton, deleteButton);
+        header.appendChild(actions);
+        noteDiv.appendChild(header);
+
+        // Note Content
+        const content = document.createElement('div');
+        content.className = 'px-4 pb-4';
+
+        const noteText = document.createElement('div');
+        noteText.className = 'whitespace-pre-wrap break-words code-font text-sm leading-relaxed';
+
+        if (!isDarkMode && !shouldUseSyntaxHighlighting(note.text)) {
+          noteText.className += ' light-mode-text';
+          noteText.textContent = note.text;
+        } else {
+          noteText.className += ' text-gray-800 dark:text-gray-100';
+          noteText.innerHTML = applySyntaxHighlighting(note.text);
+        }
+
+        content.appendChild(noteText);
+        noteDiv.appendChild(content);
+
+        return noteDiv;
+      }
+
+      // Note Operations
+      function addOrUpdateNote() {
+        const text = noteInput.value.trim();
+        if (!text) return;
+
+        const category = categorySelect.value;
+        const tags = tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+
+        const noteData = {
+          id: editingIndex !== null ? notes[editingIndex].id : generateId(),
+          text,
+          category,
+          tags,
+          important: editingIndex !== null ? notes[editingIndex].important : false,
+          createdAt: editingIndex !== null ? notes[editingIndex].createdAt : Date.now(),
+          updatedAt: Date.now()
+        };
+
+        if (editingIndex !== null) {
+          notes[editingIndex] = noteData;
+          editingIndex = null;
+        } else {
+          notes.unshift(noteData);
+        }
+
+        // Clear inputs
+        noteInput.value = '';
+        categorySelect.value = '';
+        tagsInput.value = '';
+        autoResize(noteInput);
+        updateCharCount();
+        updateAddButton();
+
+        renderNotes();
+        updateStats();
+      }
+
+      function editNote(index) {
+        const note = notes[index];
+        editingIndex = index;
+        noteInput.value = note.text;
+        categorySelect.value = note.category || '';
+        tagsInput.value = note.tags ? note.tags.join(', ') : '';
+        autoResize(noteInput);
+        updateCharCount();
+        updateAddButton();
+        noteInput.focus();
+        noteInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      function deleteNote(index, noteElement) {
+        noteElement.style.transform = 'scale(0.95)';
+        noteElement.style.opacity = '0';
+        setTimeout(() => {
+          notes.splice(index, 1);
+          renderNotes();
+          updateStats();
+        }, 200);
+      }
+
+      function toggleImportant(index) {
+        notes[index].important = !notes[index].important;
+        notes.sort((a, b) => b.important - a.important);
+        renderNotes();
+      }
+
+      function copyNote(note, button) {
+        navigator.clipboard.writeText(note.text).then(() => {
+          button.classList.add('scale-125');
+          button.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>';
+          setTimeout(() => {
+            button.classList.remove('scale-125');
+            button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>';
+          }, 1000);
+        });
+      }
+
+      // Filtering and Sorting
+      function filterNotes() {
+        return notes.filter(note => {
+          // Search filter
+          if (searchQuery && !note.text.toLowerCase().includes(searchQuery.toLowerCase()) && 
+              !note.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))) {
+            return false;
+          }
+
+          // Category filter
+          switch (currentFilter) {
+            case 'important': return note.important;
+            case 'work':
+            case 'personal':
+            case 'ideas':
+            case 'code':
+            case 'urgent':
+              return note.category === currentFilter;
+            default: return true;
+          }
+        });
+      }
+
+      function sortNotes(filteredNotes) {
+        return filteredNotes.sort((a, b) => {
+          switch (currentSort) {
+            case 'oldest':
+              return a.createdAt - b.createdAt;
+            case 'alphabetical':
+              return a.text.localeCompare(b.text);
+            case 'important':
+              return b.important - a.important || b.createdAt - a.createdAt;
+            default: // newest
+              return b.createdAt - a.createdAt;
+          }
+        });
+      }
+
+      function renderNotes() {
+        const filteredNotes = filterNotes();
+        const sortedNotes = sortNotes(filteredNotes);
+
+        notesContainer.innerHTML = '';
+        emptyState.style.display = sortedNotes.length === 0 ? 'block' : 'none';
+
+        if (sortedNotes.length === 0) return;
+
+        const gridClass = isGridView ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-4';
+        notesContainer.className = `container mx-auto px-4 max-w-6xl ${gridClass}`;
+
+        sortedNotes.forEach((note, index) => {
+          const originalIndex = notes.findIndex(n => n.id === note.id);
+          notesContainer.appendChild(createNoteElement(note, originalIndex));
+        });
+      }
+
+      // Input Handlers
+      function updateCharCount() {
+        const count = noteInput.value.length;
+        charCount.textContent = count;
+        charCount.className = count > 1000 ? 'text-orange-500' : count > 2000 ? 'text-red-500' : 'text-gray-400';
+      }
+
+      function updateAddButton() {
+        const hasText = noteInput.value.trim().length > 0;
+        addButton.disabled = !hasText;
+        addButton.className = hasText 
+          ? 'p-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all hover:scale-105 shadow-lg'
+          : 'p-2 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-xl cursor-not-allowed';
+      }
+
+      // Event Listeners
+      noteInput.addEventListener('input', () => {
+        autoResize(noteInput);
+        updateCharCount();
+        updateAddButton();
+      });
+
+      noteInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          addOrUpdateNote();
+        } else if (e.key === 'Escape') {
+          editingIndex = null;
+          noteInput.value = '';
+          categorySelect.value = '';
+          tagsInput.value = '';
+          autoResize(noteInput);
+          updateCharCount();
+          updateAddButton();
+        }
+      });
+
+      addButton.addEventListener('click', addOrUpdateNote);
+
+      // Search functionality
+      searchInput?.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderNotes();
+      });
+
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = 'px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors filter-btn';
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active', 'bg-blue-500', 'text-white', 'border-blue-500');
+            b.className = 'px-4 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors filter-btn';
+          });
+          btn.classList.add('active', 'bg-blue-500', 'text-white', 'border-blue-500');
+          currentFilter = btn.dataset.filter;
+          renderNotes();
+        });
+      });
+
+      // Sort functionality
+      sortBy.addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        renderNotes();
+      });
+
+      // View toggle
+      viewToggle.addEventListener('click', () => {
+        isGridView = !isGridView;
+        viewToggle.innerHTML = isGridView 
+          ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>'
+          : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>';
+        renderNotes();
+      });
+
+      // Clear all functionality
+      clearAllBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete all notes? This action cannot be undone.')) {
+          notes = [];
+          renderNotes();
+          updateStats();
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          switch (e.key) {
+            case '/':
+              e.preventDefault();
+              searchInput?.focus();
+              break;
+            case 'n':
+              e.preventDefault();
+              noteInput.focus();
+              break;
+            case 'd':
+              if (e.shiftKey) {
+                e.preventDefault();
+                isDarkMode = !isDarkMode;
+                html.classList.toggle('dark', isDarkMode);
+                renderNotes();
+              }
+              break;
+          }
+        }
+      });
+
+      // Initialize
+      function init() {
+        // Set initial filter button as active
+        document.querySelector('.filter-btn[data-filter="all"]').classList.add('active', 'bg-blue-500', 'text-white', 'border-blue-500');
+        
+        autoResize(noteInput);
+        updateCharCount();
+        updateAddButton();
+        updateStats();
+        renderNotes();
+        
+        // Focus input on load
+        noteInput.focus();
+
+        // Add some demo notes for better UX
+        if (notes.length === 0) {
+          notes = [
+            {
+              id: generateId(),
+              text: "Welcome to Enhanced Quick Notes! 🎉\n\nFeatures:\n• Rich categories and tags\n• Search functionality\n• Syntax highlighting for code\n• Grid/list view toggle\n• Dark/light theme\n• Export capabilities",
+              category: "ideas",
+              tags: ["welcome", "features"],
+              important: true,
+              createdAt: Date.now() - 1000,
+              updatedAt: Date.now() - 1000
+            },
+            {
+              id: generateId(),
+              text: "const greeting = 'Hello World!';\nconsole.log(greeting);\n\n// This note demonstrates syntax highlighting",
+              category: "code",
+              tags: ["javascript", "demo"],
+              important: false,
+              createdAt: Date.now() - 2000,
+              updatedAt: Date.now() - 2000
+            },
+            {
+              id: generateId(),
+              text: "Meeting with team at 2 PM\n- Discuss project timeline\n- Review budget allocation\n- Plan next sprint",
+              category: "work",
+              tags: ["meeting", "planning"],
+              important: false,
+              createdAt: Date.now() - 3000,
+              updatedAt: Date.now() - 3000
+            }
+          ];
+          renderNotes();
+          updateStats();
+        }
+      }
+
+      // Start the app
+      init();
+    </script>
   </body>
 </html>
